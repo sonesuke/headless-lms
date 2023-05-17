@@ -1,10 +1,12 @@
 #!/usr/bin/env node
 import 'source-map-support/register';
 import * as cdk from 'aws-cdk-lib';
-import { AppStack } from '../lib/app-stack';
+import { VODStack } from '../lib/vod-stack';
+import { ApiStack } from '../lib/api-stack';
+import { IdPoolStack } from '../lib/idpool-stack';
 
 const app = new cdk.App();
-new AppStack(app, 'AppStack', {
+new VODStack(app, 'VODStack', {
   /* If you don't specify 'env', this stack will be environment-agnostic.
    * Account/Region-dependent features and context lookups will not work,
    * but a single synthesized template can be deployed anywhere. */
@@ -18,4 +20,11 @@ new AppStack(app, 'AppStack', {
   // env: { account: '123456789012', region: 'us-east-1' },
 
   /* For more information, see https://docs.aws.amazon.com/cdk/latest/guide/environments.html */
+});
+
+const api = new ApiStack(app, 'ApiStack', {
+});
+
+new IdPoolStack(app, 'IdPoolStack', {
+  api: api.api
 });

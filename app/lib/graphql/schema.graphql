@@ -1,0 +1,35 @@
+type Module {
+  id: ID!
+  updatedAt: String!
+  data: String!
+}
+
+type User {
+  id: ID!
+  updatedAt: String!
+  data: String
+}
+
+type History
+{
+  userId: ID!
+  moduleId: ID!
+  userAndModuleId: ID!
+  updatedAt: String!
+  data: String!
+}
+
+
+type Query
+{
+  getAllModule: [Module!]
+  getModule(id: ID!): Module!
+  getUser(id: ID!): User!
+
+  getAllHistory(userId: ID!): [History!]
+  getLatestHistory(userId: ID!, moduleId: ID!): History
+}
+
+type Mutation {
+  pushHistory(userId: ID!, moduleId: ID!, data: String!): History!
+}
