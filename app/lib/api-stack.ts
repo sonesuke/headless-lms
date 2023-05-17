@@ -19,6 +19,11 @@ export class ApiStack extends cdk.Stack {
       schema: appsync.SchemaFile.fromAsset(
         path.join(__dirname, "graphql/schema.graphql")
       ),
+      authorizationConfig: {
+        defaultAuthorization: {
+          authorizationType: appsync.AuthorizationType.IAM,
+        },
+      },
       xrayEnabled: true,
       logConfig: {
         fieldLogLevel: appsync.FieldLogLevel.ALL,
@@ -27,8 +32,17 @@ export class ApiStack extends cdk.Stack {
     });
     this.api = api;
 
+    const unitTable = new dynamodb.Table(this, "UnitTable", {
+      tableName: "HLLMS_Unit",
+      partitionKey: {
+        name: "id",
+        type: dynamodb.AttributeType.STRING,
+      },
+      removalPolicy: cdk.RemovalPolicy.DESTROY,
+    });
+
     const moduleTable = new dynamodb.Table(this, "ModuleTable", {
-      tableName: "Module",
+      tableName: "HLLMS_Module",
       partitionKey: {
         name: "id",
         type: dynamodb.AttributeType.STRING,
@@ -37,7 +51,7 @@ export class ApiStack extends cdk.Stack {
     });
 
     const userTable = new dynamodb.Table(this, "UserTable", {
-      tableName: "User",
+      tableName: "HLLMS_User",
       partitionKey: {
         name: "id",
         type: dynamodb.AttributeType.STRING,
@@ -46,16 +60,30 @@ export class ApiStack extends cdk.Stack {
     });
 
     const historyTable = new dynamodb.Table(this, "HistoryTable", {
-      tableName: "History",
+      tableName: "HLLMS_History",
       partitionKey: {
         name: "userId",
         type: dynamodb.AttributeType.STRING,
       },
       sortKey: {
-        name: "moduleId",
+        name: "unitId",
         type: dynamodb.AttributeType.STRING,
       },
       removalPolicy: cdk.RemovalPolicy.DESTROY,
+    });
+
+    const unitDataSource = api.addDynamoDbDataSource(
+      "UnitDataSource",
+      unitTable
+    );
+
+    unitDataSource.createResolver("QueryGetUnit", {
+      typeName: "Query",
+      fieldName: "getUnit",
+      requestMappingTemplate: appsync.MappingTemplate.dynamoDbQuery(
+        appsync.KeyCondition.eq("id", "id")
+      ),
+      responseMappingTemplate: appsync.MappingTemplate.dynamoDbResultList(),
     });
 
     const moduleDataSource = api.addDynamoDbDataSource(
@@ -73,11 +101,10 @@ export class ApiStack extends cdk.Stack {
     moduleDataSource.createResolver("QueryGetModule", {
       typeName: "Query",
       fieldName: "getModule",
-      requestMappingTemplate: appsync.MappingTemplate.dynamoDbGetItem(
-        "id",
-        "id"
+      requestMappingTemplate: appsync.MappingTemplate.dynamoDbQuery(
+        appsync.KeyCondition.eq("id", "id")
       ),
-      responseMappingTemplate: appsync.MappingTemplate.dynamoDbResultItem(),
+      responseMappingTemplate: appsync.MappingTemplate.dynamoDbResultList(),
     });
 
     const userDataSource = api.addDynamoDbDataSource(
@@ -88,11 +115,10 @@ export class ApiStack extends cdk.Stack {
     userDataSource.createResolver("QueryGetUser", {
       typeName: "Query",
       fieldName: "getUser",
-      requestMappingTemplate: appsync.MappingTemplate.dynamoDbGetItem(
-        "id",
-        "id"
+      requestMappingTemplate: appsync.MappingTemplate.dynamoDbQuery(
+        appsync.KeyCondition.eq("id", "id")
       ),
-      responseMappingTemplate: appsync.MappingTemplate.dynamoDbResultItem(),
+      responseMappingTemplate: appsync.MappingTemplate.dynamoDbResultList(),
     });
 
     const historyDataSource = api.addDynamoDbDataSource(
@@ -102,19 +128,19 @@ export class ApiStack extends cdk.Stack {
 
     historyDataSource.createResolver("QueryGetAllHistory", {
       typeName: "Query",
-      fieldName: "getAllHistory",
+      fieldName: "getUserHistory",
       requestMappingTemplate: appsync.MappingTemplate.dynamoDbQuery(
         appsync.KeyCondition.eq("userId", "userId")
       ),
       responseMappingTemplate: appsync.MappingTemplate.dynamoDbResultList(),
     });
 
-    historyDataSource.createResolver("QueryGetLatestHistory", {
+    historyDataSource.createResolver("QueryGetHistory", {
       typeName: "Query",
-      fieldName: "getLatestHistory",
+      fieldName: "getHistory",
       requestMappingTemplate: appsync.MappingTemplate.dynamoDbQuery(
         appsync.KeyCondition.eq("userId", "userId").and(
-          appsync.KeyCondition.eq("moduleId", "moduleId")
+          appsync.KeyCondition.eq("unitId", "unitId")
         )
       ),
       responseMappingTemplate: appsync.MappingTemplate.dynamoDbResultList()
@@ -129,10 +155,11 @@ export class ApiStack extends cdk.Stack {
             "operation" : "PutItem",
             "key" : {
                 "userId" : \$util.dynamodb.toDynamoDBJson(\$ctx.args.userId),
-                "moduleId" : \$util.dynamodb.toDynamoDBJson(\$ctx.args.moduleId)
+                "unitId" : \$util.dynamodb.toDynamoDBJson(\$ctx.args.unitId)
             },
             "attributeValues" : {
                 "updatedAt" : \$util.dynamodb.toDynamoDBJson(\$util.time.nowISO8601()),
+                "progress" : \$util.dynamodb.toDynamoDBJson(\$ctx.args.progress),
                 "data" : \$util.dynamodb.toDynamoDBJson(\$ctx.args.data)
             }
         }`),

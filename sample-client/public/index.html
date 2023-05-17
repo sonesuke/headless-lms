@@ -3,14 +3,28 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite + TS</title>
+    <title>Headless LMS</title>
     <link href="https://vjs.zencdn.net/7.15.4/video-js.css" rel="stylesheet">
-    <script src="https://vjs.zencdn.net/7.15.4/video.js" defer></script>
+    <script type="text/javascript" src="headless-lms.umd.cjs"></script>
+
   </head>
   <body>
-    <div class="headless" data-module-id="converted"></div>
-    <div class="headless" data-module-id="converted"></div>
-    <div class="headless" data-module-id="converted"></div>
-    <script type="text/javascript" src="../dist/headless-lms.umd.cjs"></script>
+    <h1>A sample of video unit</h1>
+    <div class="headless" data-unit-id="sample-video"></div>
+
+    <h1>A sample of article unit</h1>
+    <div class="headless" data-unit-id="sample-article"></div>
+
+    <h1>A sample of quiz unit</h1>
+    <div class="headless" data-unit-id="sample-quiz"></div>
+
+    <script type="text/javascript">
+      HeadLessLMS.render(
+        "div.headless", // html tag
+        "test", // userId
+        "ap-northeast-1:aaa0cfb4-bdd0-4a32-9c21-fb929a26e61a", // IdPoolId
+        "https://nmxwcm7exnfyhdpmqaovuvx4f4.appsync-api.ap-northeast-1.amazonaws.com/graphql" // Endpoint
+      );
+    </script>
   </body>
 </html>
