@@ -1,7 +1,14 @@
+type Unit {
+  id: ID!
+  updatedAt: String!
+  type: String!
+  data: String!
+}
+
 type Module {
   id: ID!
   updatedAt: String!
-  data: String!
+  units: [Unit!]!
 }
 
 type User {
@@ -10,26 +17,26 @@ type User {
   data: String
 }
 
-type History
-{
+type History {
   userId: ID!
-  moduleId: ID!
-  userAndModuleId: ID!
+  unitId: ID!
   updatedAt: String!
+  progress: Int!
   data: String!
 }
 
+type Query {
+  getUnit(id: ID!): [Unit!]
 
-type Query
-{
   getAllModule: [Module!]
-  getModule(id: ID!): Module!
-  getUser(id: ID!): User!
+  getModule(id: ID!): [Module!]
 
-  getAllHistory(userId: ID!): [History!]
-  getLatestHistory(userId: ID!, moduleId: ID!): History
+  getUser(id: ID!): [User!]
+
+  getUserHistory(userId: ID!): [History!]
+  getHistory(userId: ID!, unitId: ID!): [History!]
 }
 
 type Mutation {
-  pushHistory(userId: ID!, moduleId: ID!, data: String!): History!
+  pushHistory(userId: ID!, unitId: ID!, progress: Int!, data: String!): History!
 }
