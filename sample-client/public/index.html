@@ -9,22 +9,31 @@
 
   </head>
   <body>
-    <h1>A sample of video unit</h1>
-    <div class="headless" data-unit-id="sample-video"></div>
+    <!-- <h1>A sample of video unit</h1>
+    <headless-unit 
+      unit-id="sample-video"
+      user-id="test"
+      id-pool-id="ap-northeast-1:aaa0cfb4-bdd0-4a32-9c21-fb929a26e61a"
+      endpoint="https://nmxwcm7exnfyhdpmqaovuvx4f4.appsync-api.ap-northeast-1.amazonaws.com/graphql"
+    >
+    </headless-unit> -->
 
     <h1>A sample of article unit</h1>
-    <div class="headless" data-unit-id="sample-article"></div>
+    <headless-unit 
+      unit-id="sample-article"
+      user-id="test"
+      id-pool-id="ap-northeast-1:aaa0cfb4-bdd0-4a32-9c21-fb929a26e61a"
+      endpoint="https://nmxwcm7exnfyhdpmqaovuvx4f4.appsync-api.ap-northeast-1.amazonaws.com/graphql"
+    >
+    </headless-unit>
 
     <h1>A sample of quiz unit</h1>
-    <div class="headless" data-unit-id="sample-quiz"></div>
-
-    <script type="text/javascript">
-      HeadLessLMS.render(
-        "div.headless", // html tag
-        "test", // userId
-        "ap-northeast-1:aaa0cfb4-bdd0-4a32-9c21-fb929a26e61a", // IdPoolId
-        "https://nmxwcm7exnfyhdpmqaovuvx4f4.appsync-api.ap-northeast-1.amazonaws.com/graphql" // Endpoint
-      );
-    </script>
+    <headless-unit 
+      unit-id="sample-quiz"
+      user-id="test"
+      id-pool-id="ap-northeast-1:aaa0cfb4-bdd0-4a32-9c21-fb929a26e61a"
+      endpoint="https://nmxwcm7exnfyhdpmqaovuvx4f4.appsync-api.ap-northeast-1.amazonaws.com/graphql"
+    >
+    </headless-unit>
   </body>
 </html>
