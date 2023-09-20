@@ -2,29 +2,7 @@
 import 'source-map-support/register';
 import * as cdk from 'aws-cdk-lib';
 import { VODStack } from '../lib/vod-stack';
-import { ApiStack } from '../lib/api-stack';
-import { IdPoolStack } from '../lib/idpool-stack';
 
 const app = new cdk.App();
-new VODStack(app, 'VODStack', {
-  /* If you don't specify 'env', this stack will be environment-agnostic.
-   * Account/Region-dependent features and context lookups will not work,
-   * but a single synthesized template can be deployed anywhere. */
+new VODStack(app, 'VODStack');
 
-  /* Uncomment the next line to specialize this stack for the AWS Account
-   * and Region that are implied by the current CLI configuration. */
-  // env: { account: process.env.CDK_DEFAULT_ACCOUNT, region: process.env.CDK_DEFAULT_REGION },
-
-  /* Uncomment the next line if you know exactly what Account and Region you
-   * want to deploy the stack to. */
-  // env: { account: '123456789012', region: 'us-east-1' },
-
-  /* For more information, see https://docs.aws.amazon.com/cdk/latest/guide/environments.html */
-});
-
-const api = new ApiStack(app, 'ApiStack', {
-});
-
-new IdPoolStack(app, 'IdPoolStack', {
-  api: api.api
-});
